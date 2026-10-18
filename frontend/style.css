@@ -1,0 +1,198 @@
+/* Culorile hărții sunt aceleași ca în figurile matplotlib (vizualizare.py) */
+:root {
+  --liber: #FFFFFF;
+  --ocupat: #BCD4EE;
+  --mixt: #FFF1A8;
+  --vizitat: #C9BEF0;
+  --obstacol: #2F6FB5;
+  --drum: #1A1A1A;
+  --netezit: #E8590C;
+  --linie: #C8C8C8;
+
+  --fundal: #F4F5F7;
+  --suprafata: #FFFFFF;
+  --text: #1D2330;
+  --text-slab: #5F6878;
+  --margine: #DDE1E7;
+  --accent: #2F6FB5;
+  --accent-text: #FFFFFF;
+  --succes: #2B8A3E;
+  --eroare: #C92A2A;
+  --raza: 8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fundal);
+  color: var(--text);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+h1, h2 { margin: 0; }
+h1 { font-size: 18px; }
+h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-slab); }
+
+.antet {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 12px 20px;
+  background: var(--suprafata);
+  border-bottom: 1px solid var(--margine);
+}
+.subtitlu { margin: 2px 0 0; color: var(--text-slab); font-size: 13px; }
+.server { font-size: 12px; color: var(--text-slab); white-space: nowrap; }
+.server.ok::before, .server.picat::before {
+  content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px;
+}
+.server.ok::before { background: var(--succes); }
+.server.picat::before { background: var(--eroare); }
+
+.pagina {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ---------- panoul de comenzi ---------- */
+.panou { display: flex; flex-direction: column; gap: 12px; }
+.grup {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 14px;
+  background: var(--suprafata);
+  border: 1px solid var(--margine);
+  border-radius: var(--raza);
+}
+.rand { display: flex; gap: 8px; align-items: flex-end; }
+.rand > * { flex: 1; }
+.camp { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-slab); }
+.camp.creste { flex: 2; }
+.camp[hidden] { display: none; }
+
+input[type=number], input[type=text], select {
+  width: 100%;
+  padding: 7px 9px;
+  font: inherit; color: var(--text);
+  background: var(--suprafata);
+  border: 1px solid var(--margine);
+  border-radius: 6px;
+}
+input:focus-visible, select:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 1px;
+}
+input[type=range] { width: 100%; accent-color: var(--accent); }
+
+.bifa { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.bifa input { accent-color: var(--accent); }
+
+.buton {
+  padding: 8px 12px;
+  font: inherit; font-weight: 600;
+  color: var(--accent-text); background: var(--accent);
+  border: 1px solid var(--accent); border-radius: 6px;
+  cursor: pointer;
+}
+.buton:hover { filter: brightness(1.08); }
+.buton.secundar { color: var(--accent); background: var(--suprafata); border-color: var(--margine); }
+.buton.secundar:hover { border-color: var(--accent); filter: none; }
+.buton:disabled { opacity: .45; cursor: default; filter: none; }
+
+.comutator {
+  display: flex;
+  padding: 3px;
+  background: var(--fundal);
+  border: 1px solid var(--margine);
+  border-radius: 7px;
+}
+.comutator label { flex: 1; }
+.comutator input { position: absolute; opacity: 0; pointer-events: none; }
+.comutator span {
+  display: block; padding: 6px 4px;
+  text-align: center; font-size: 13px; color: var(--text-slab);
+  border-radius: 5px; cursor: pointer;
+}
+.comutator input:checked + span { background: var(--suprafata); color: var(--text); font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+.comutator input:focus-visible + span { outline: 2px solid var(--accent); }
+
+.ajutor { margin: 0; font-size: 12px; color: var(--text-slab); }
+
+/* ---------- harta ---------- */
+.spatiu { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.suprafata {
+  background: var(--suprafata);
+  border: 1px solid var(--margine);
+  border-radius: var(--raza);
+  padding: 8px;
+  display: flex; justify-content: center;
+}
+canvas { display: block; touch-action: none; max-width: 100%; }
+
+.sub-canvas { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; padding: 0; list-style: none;
+  font-size: 12px; color: var(--text-slab); }
+.legenda li { display: flex; align-items: center; gap: 6px; }
+.legenda i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; }
+.legenda i.linie { width: 18px; height: 0; border-top: 2.5px solid; border-radius: 0; }
+.legenda i.punctat { border-top-style: dashed; }
+.coordonate { font-size: 12px; color: var(--text-slab); font-variant-numeric: tabular-nums; }
+
+.mesaj {
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #FFF0F0; color: var(--eroare);
+  border: 1px solid #F5C2C2;
+}
+.mesaj.info { background: #EEF5FF; color: var(--accent); border-color: #C5DAF3; }
+
+/* ---------- rezultate ---------- */
+.rezultate {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 14px;
+  background: var(--suprafata);
+  border: 1px solid var(--margine);
+  border-radius: var(--raza);
+}
+.stare-drum { font-weight: 600; }
+.stare-drum.gasit { color: var(--succes); }
+.stare-drum.negasit { color: var(--eroare); }
+.stare-drum small { display: block; font-weight: 400; color: var(--text-slab); }
+
+.metrici {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+.metrici div { display: flex; flex-direction: column-reverse; gap: 2px; }
+.metrici dt { font-size: 12px; color: var(--text-slab); }
+.metrici dd { margin: 0; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.metrici dd small { font-size: 12px; font-weight: 400; color: var(--text-slab); }
+
+/* ---------- comparație ---------- */
+.comparatie {
+  padding: 14px;
+  background: var(--suprafata);
+  border: 1px solid var(--margine);
+  border-radius: var(--raza);
+}
+.titlu-comparatie { display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  flex-wrap: wrap; margin-bottom: 10px; }
+.tabel-container { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--margine); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-size: 12px; font-weight: 600; color: var(--text-slab); }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--fundal); }
+tbody tr.activ { background: #EEF5FF; }
+td.cel-mai-bun { font-weight: 700; color: var(--succes); }
+
+@media (max-width: 860px) {
+  .pagina { grid-template-columns: 1fr; padding: 12px 16px; }
+  .spatiu { order: -1; }
+  .antet { padding: 10px 16px; }
+}

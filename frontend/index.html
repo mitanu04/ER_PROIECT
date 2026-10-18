@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Planificarea drumului</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="antet">
+    <div>
+      <h1>Planificarea drumului</h1>
+      <p class="subtitlu">Descompunere celulară aproximativă · grilă uniformă și quadtree</p>
+    </div>
+    <span id="server" class="server">conectare…</span>
+  </header>
+
+  <main class="pagina">
+    <aside class="panou">
+      <section class="grup">
+        <h2>Hartă</h2>
+        <label class="camp">Hărți salvate
+          <select id="harti"></select>
+        </label>
+        <div class="rand">
+          <label class="camp">Lățime (cm)<input id="latime" type="number" min="1" max="10000" step="1"></label>
+          <label class="camp">Înălțime (cm)<input id="inaltime" type="number" min="1" max="10000" step="1"></label>
+        </div>
+        <div class="rand">
+          <label class="camp creste">Nume<input id="nume-harta" type="text" maxlength="50" placeholder="harta_mea"></label>
+          <button id="salveaza" class="buton">Salvează</button>
+        </div>
+        <div class="rand">
+          <button id="harta-noua" class="buton secundar">Hartă nouă</button>
+          <button id="goleste" class="buton secundar">Golește harta</button>
+        </div>
+      </section>
+
+      <section class="grup">
+        <h2>Editare</h2>
+        <div class="comutator" role="radiogroup">
+          <label><input type="radio" name="unealta" value="muta" checked><span>Selectează / mută</span></label>
+          <label><input type="radio" name="unealta" value="deseneaza"><span>Desenează obstacol</span></label>
+        </div>
+        <button id="sterge-obstacol" class="buton secundar" disabled>Șterge obstacolul selectat</button>
+        <p class="ajutor" id="ajutor-unealta"></p>
+      </section>
+
+      <section class="grup">
+        <h2>Descompunere</h2>
+        <div class="comutator" role="radiogroup">
+          <label><input type="radio" name="tip" value="grila" checked><span>Grilă uniformă</span></label>
+          <label><input type="radio" name="tip" value="quadtree"><span>Quadtree</span></label>
+        </div>
+        <div class="rand">
+          <label class="camp"><span id="eticheta-latura">Latura celulei (cm)</span>
+            <input id="latura" type="number" min="0.1" step="0.5" value="2"></label>
+          <label class="camp" id="camp-adancime" hidden>Adâncime maximă
+            <input id="adancime" type="number" min="1" max="12" step="1" value="7"></label>
+        </div>
+        <div class="comutator" role="radiogroup">
+          <label><input type="radio" name="vecinatate" value="4"><span>4 vecini</span></label>
+          <label><input type="radio" name="vecinatate" value="8" checked><span>8 vecini</span></label>
+        </div>
+      </section>
+
+      <section class="grup">
+        <h2>Căutare</h2>
+        <label class="camp">Algoritm
+          <select id="metoda">
+            <option value="bfs">BFS</option>
+            <option value="dijkstra">Dijkstra</option>
+            <option value="astar" selected>A*</option>
+            <option value="greedy">Greedy</option>
+          </select>
+        </label>
+        <label class="bifa"><input id="netezire" type="checkbox" checked> Netezirea drumului</label>
+        <label class="bifa"><input id="arata-celule" type="checkbox" checked> Arată celulele</label>
+        <label class="bifa"><input id="arata-vizitate" type="checkbox" checked> Arată celulele vizitate</label>
+        <label class="camp">Durata animației: <span id="eticheta-durata">3 s</span>
+          <input id="durata" type="range" min="1" max="15" step="1" value="3"></label>
+        <div class="rand">
+          <button id="animeaza" class="buton">▶ Animează</button>
+          <button id="compara" class="buton secundar">Compară</button>
+        </div>
+      </section>
+    </aside>
+
+    <section class="spatiu">
+      <div class="suprafata" id="suprafata">
+        <canvas id="canvas"></canvas>
+      </div>
+      <div class="sub-canvas">
+        <ul class="legenda">
+          <li><i style="background:var(--liber);border:1px solid var(--linie)"></i>liberă</li>
+          <li><i style="background:var(--mixt)"></i>mixtă</li>
+          <li><i style="background:var(--ocupat)"></i>ocupată</li>
+          <li><i style="background:var(--vizitat)"></i>vizitată</li>
+          <li><i style="background:var(--obstacol)"></i>obstacol</li>
+          <li><i class="linie" style="border-color:var(--drum)"></i>drum</li>
+          <li><i class="linie punctat" style="border-color:var(--netezit)"></i>netezit</li>
+        </ul>
+        <span id="coordonate" class="coordonate"></span>
+      </div>
+
+      <div id="mesaj" class="mesaj" hidden></div>
+
+      <div class="rezultate">
+        <div class="stare-drum" id="stare-drum"></div>
+        <dl class="metrici" id="metrici"></dl>
+      </div>
+
+      <div id="comparatie" class="comparatie" hidden>
+        <div class="titlu-comparatie">
+          <h2>Comparația algoritmilor</h2>
+          <span class="ajutor">Click pe un rând îl afișează pe hartă.</span>
+        </div>
+        <div class="tabel-container"><table id="tabel-comparatie"></table></div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
