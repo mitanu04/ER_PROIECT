@@ -1,18 +1,19 @@
 <!doctype html>
 <html lang="ro">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Planificarea drumului</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <header class="antet">
     <div>
       <h1>Planificarea drumului</h1>
       <p class="subtitlu">Descompunere celulară aproximativă · grilă uniformă și quadtree</p>
     </div>
-    <span id="server" class="server">conectare…</span>
   </header>
 
   <main class="pagina">
@@ -27,7 +28,8 @@
           <label class="camp">Înălțime (cm)<input id="inaltime" type="number" min="1" max="10000" step="1"></label>
         </div>
         <div class="rand">
-          <label class="camp creste">Nume<input id="nume-harta" type="text" maxlength="50" placeholder="harta_mea"></label>
+          <label class="camp creste">Nume<input id="nume-harta" type="text" maxlength="50"
+              placeholder="harta_mea"></label>
           <button id="salveaza" class="buton">Salvează</button>
         </div>
         <div class="rand">
@@ -115,11 +117,14 @@
           <h2>Comparația algoritmilor</h2>
           <span class="ajutor">Click pe un rând îl afișează pe hartă.</span>
         </div>
-        <div class="tabel-container"><table id="tabel-comparatie"></table></div>
+        <div class="tabel-container">
+          <table id="tabel-comparatie"></table>
+        </div>
       </div>
     </section>
   </main>
 
   <script type="module" src="js/main.js"></script>
 </body>
+
 </html>

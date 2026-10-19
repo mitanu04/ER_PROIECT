@@ -30,12 +30,8 @@ async function porneste() {
   initEditor();
   actualizeazaButoane();
   try {
-    const { versiune } = await api.sanatate();
-    $("server").textContent = `server conectat · v${versiune}`;
-    $("server").className = "server ok";
+    await api.sanatate();
   } catch {
-    $("server").textContent = "server indisponibil";
-    $("server").className = "server picat";
     afiseazaMesaj(`Nu mă pot conecta la server (${API || location.origin}). ` +
       "Pornește-l din folderul backend cu: uvicorn api:app --reload");
     return;
