@@ -1,6 +1,7 @@
-// Desenarea hărții pe canvas, pe trei straturi:
-//   - stratCelule:   descompunerea (se redesenează doar când se schimbă celulele)
-//   - stratVizitate: celulele vizitate de algoritm (și pentru animație)
+// Desenarea hărții pe canvas, pe patru straturi:
+//   - stratCelule:    descompunerea (se redesenează doar când se schimbă celulele)
+//   - stratVizitate:  celulele vizitate de algoritm (și pentru animație)
+//   - stratImpartire: quadtree-ul pe parcursul animației împărțirii
 //   - canvas-ul principal: straturile de mai sus + obstacole, drumuri, start, țintă
 // Astfel, la tragerea cu mouse-ul se redesenează doar elementele vectoriale,
 // chiar dacă descompunerea are zeci de mii de celule.
@@ -14,6 +15,7 @@ export const canvas = $("canvas");
 const ctx = canvas.getContext("2d");
 const stratCelule = document.createElement("canvas");
 const stratVizitate = document.createElement("canvas");
+const stratImpartire = document.createElement("canvas");
 
 /** Potrivește canvas-ul la spațiul disponibil și la proporțiile hărții. */
 export function redimensioneaza() {
@@ -25,7 +27,7 @@ export function redimensioneaza() {
   vedere.latime = Math.round(W * vedere.scara + 2 * PAD);
   vedere.inaltime = Math.round(H * vedere.scara + 2 * PAD);
   vedere.dpr = window.devicePixelRatio || 1;
-  for (const c of [canvas, stratCelule, stratVizitate]) {
+  for (const c of [canvas, stratCelule, stratVizitate, stratImpartire]) {
     c.width = Math.round(vedere.latime * vedere.dpr);
     c.height = Math.round(vedere.inaltime * vedere.dpr);
   }
@@ -82,6 +84,32 @@ export function deseneazaVizitate(ordine, de = 0, pana = ordine.length) {
   c.fill(cale);
 }
 
+/** Desenează celulele apărute la pașii pasi[de..pana) ai împărțirii quadtree-ului
+ *  (vezi pasiImpartire din animatie.js). Cu de = 0, stratul se golește întâi. */
+export function deseneazaImpartire(pasi, de = 0, pana = pasi.length) {
+  const c = stratImpartire.getContext("2d");
+  c.setTransform(vedere.dpr, 0, 0, vedere.dpr, 0, 0);
+  if (de === 0) c.clearRect(0, 0, vedere.latime, vedere.inaltime);
+  if (!stare.harta) return;
+  // copiii acoperă părintele, deci ajunge să-i desenăm peste el
+  const umpleri = CULORI.stari.map(() => new Path2D());
+  const contur = new Path2D();
+  for (let i = de; i < pana; i++) {
+    for (const celula of pasi[i].copii) {
+      const [x, y, w, h] = dreptunghiCelula(celula);
+      umpleri[celula[4]].rect(x, y, w, h);
+      contur.rect(x, y, w, h);
+    }
+  }
+  umpleri.forEach((p, i) => {
+    c.fillStyle = CULORI.stari[i];
+    c.fill(p);
+  });
+  c.strokeStyle = CULORI.linie;
+  c.lineWidth = 0.6;
+  c.stroke(contur);
+}
+
 // ----------------------------------------------------------------------
 // Canvas-ul principal
 // ----------------------------------------------------------------------
@@ -106,8 +134,12 @@ export function deseneazaAcum() {
   // 1. celulele și celulele vizitate
   ctx.fillStyle = "#FFFFFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  if ($("arata-celule").checked) ctx.drawImage(stratCelule, 0, 0);
-  if ($("arata-vizitate").checked || stare.animatie) ctx.drawImage(stratVizitate, 0, 0);
+  if (stare.animatie?.tip === "impartire") {
+    ctx.drawImage(stratImpartire, 0, 0);
+  } else {
+    if ($("arata-celule").checked) ctx.drawImage(stratCelule, 0, 0);
+    if ($("arata-vizitate").checked || stare.animatie) ctx.drawImage(stratVizitate, 0, 0);
+  }
   ctx.setTransform(vedere.dpr, 0, 0, vedere.dpr, 0, 0);
 
   // 2. obstacolele
@@ -119,6 +151,13 @@ export function deseneazaAcum() {
     ctx.strokeStyle = i === stare.selectat ? CULORI.selectat : CULORI.margineObstacol;
     ctx.stroke();
   });
+
+  // celula împărțită cel mai recent, în timpul animației împărțirii
+  if (stare.animatie?.evidentiat) {
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = CULORI.selectat;
+    ctx.strokeRect(...dreptunghiCelula(stare.animatie.evidentiat));
+  }
 
   // 3. marginea hărții
   ctx.lineWidth = 3;

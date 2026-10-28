@@ -109,8 +109,18 @@ def salveaza_harta(nume: str, harta: HartaModel):
 # ----------------------------------------------------------------------
 # Frontend: dacă există folderul frontend, e servit direct de la http://127.0.0.1:8000/
 # ----------------------------------------------------------------------
+class _FaraCache(StaticFiles):
+    """Browserul verifică la fiecare încărcare dacă fișierele s-au schimbat
+    (altfel poate folosi o versiune veche a JS-ului după o modificare)."""
+
+    async def get_response(self, path, scope):
+        raspuns = await super().get_response(path, scope)
+        raspuns.headers["Cache-Control"] = "no-cache"
+        return raspuns
+
+
 if os.path.isdir(DIRECTOR_FRONTEND):
-    app.mount("/", StaticFiles(directory=DIRECTOR_FRONTEND, html=True), name="frontend")
+    app.mount("/", _FaraCache(directory=DIRECTOR_FRONTEND, html=True), name="frontend")
 else:
     @app.get("/", include_in_schema=False)
     def radacina():

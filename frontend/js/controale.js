@@ -1,17 +1,25 @@
 // Legarea panoului de comenzi (din stânga) la acțiunile aplicației.
 
-import { comutaAnimatia } from "./animatie.js";
+import { comutaAnimatia, comutaImpartirea } from "./animatie.js";
 import {
   compara, golesteHarta, hartaNoua, incarcaHarta, programeazaPlanificare, salveazaHarta,
   schimbaDimensiunile, stergeObstacolSelectat,
 } from "./aplicatie.js";
 import { deseneaza, redimensioneaza } from "./desen.js";
-import { $ } from "./dom.js";
+import { $, parametriDescompunere } from "./dom.js";
 import { seteazaUnealta } from "./editor.js";
 
 const laSchimbare = (selector, functie) => {
   for (const el of document.querySelectorAll(selector)) el.addEventListener("change", functie);
 };
+
+/** Câmpurile și butoanele care țin de tipul descompunerii ales. */
+function afiseazaCampuriTip() {
+  const quadtree = parametriDescompunere().tip === "quadtree";
+  $("camp-adancime").hidden = !quadtree;
+  $("imparte").hidden = !quadtree;
+  $("eticheta-latura").textContent = quadtree ? "Latura minimă (cm)" : "Latura celulei (cm)";
+}
 
 export function initControale() {
   // Hartă
@@ -26,12 +34,11 @@ export function initControale() {
   $("sterge-obstacol").addEventListener("click", stergeObstacolSelectat);
 
   // Descompunere
-  laSchimbare("input[name=tip]", (ev) => {
-    const quadtree = ev.target.value === "quadtree";
-    $("camp-adancime").hidden = !quadtree;
-    $("eticheta-latura").textContent = quadtree ? "Latura minimă (cm)" : "Latura celulei (cm)";
+  laSchimbare("input[name=tip]", () => {
+    afiseazaCampuriTip();
     programeazaPlanificare(0);
   });
+  afiseazaCampuriTip();      // browserul poate păstra „Quadtree” bifat la reîncărcarea paginii
   laSchimbare("input[name=vecinatate]", () => programeazaPlanificare(0));
   for (const id of ["latura", "adancime"]) {
     $(id).addEventListener("input", () => programeazaPlanificare(300));
@@ -44,6 +51,7 @@ export function initControale() {
     $("eticheta-durata").textContent = `${$("durata").value} s`;
   });
   $("animeaza").addEventListener("click", comutaAnimatia);
+  $("imparte").addEventListener("click", comutaImpartirea);
   $("compara").addEventListener("click", compara);
 
   // Click pe un rând din tabelul comparativ -> acel algoritm pe hartă

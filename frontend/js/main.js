@@ -7,7 +7,7 @@
 //   coordonate.js  transformări cm <-> pixeli, teste geometrice
 //   api.js         cererile către server
 //   desen.js       desenarea pe canvas
-//   animatie.js    animația căutării
+//   animatie.js    animația căutării și a împărțirii quadtree-ului
 //   panou.js       rezultate, tabelul comparativ, mesaje
 //   aplicatie.js   planificarea și operațiile pe hartă
 //   editor.js      editarea hărții cu mouse-ul și tastatura

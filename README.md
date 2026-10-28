@@ -42,7 +42,7 @@ adresă se poate da cu `?api=http://...`.
 | `api.js` | cererile către server |
 | `aplicatie.js` | planificarea drumului, comparația, încărcarea / salvarea / modificarea hărții |
 | `desen.js` | desenarea pe canvas, pe straturi (celule, celule vizitate, restul) |
-| `animatie.js` | animația căutării |
+| `animatie.js` | animația căutării și animația împărțirii quadtree-ului |
 | `panou.js` | metricile, tabelul comparativ, mesajele, starea butoanelor |
 | `editor.js` | editarea hărții cu mouse-ul și tastatura |
 | `controale.js` | legarea panoului de comenzi la acțiuni |
